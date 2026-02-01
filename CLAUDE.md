@@ -28,6 +28,7 @@ Projects live in `~/Local/` with nested subdirectories. Each project can have it
 Current projects:
 - `~/Local/bio/`
 - `~/Local/ceretography/`
+- `~/Local/goals-dashboard/` - 2026 goals tracking PWA (SvelteKit + SQLite). Repo: `git@github.com:fraserYT/goals-dashboard.git` (private). Has harness-style CLAUDE.md with structured issues and session workflow.
 
 ## Preferences
 
@@ -37,3 +38,5 @@ Current projects:
 
 <!-- Ongoing notes from our conversations -->
 - 2026-01-18: Set up fresh yadm configuration, planning to sync with work laptop later
+- 2026-01-18: Started goals-dashboard implementation - ~80% complete. Core features done (OAuth, services, cron, PWA, dashboard, all goal pages). See `~/Local/goals-dashboard/CLAUDE.md` for detailed progress notes and remaining tasks.
+- 2026-02-01: Set up harness for goals-dashboard. Initialized git, pushed to private GitHub repo, removed deprecated Fitbit code, restructured CLAUDE.md with deployment issues (DEPLOY-1 through DEPLOY-6) for Mac Mini migration. Next step: clone on Mac Mini and work through deployment issues.
