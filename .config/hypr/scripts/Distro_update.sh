@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
 # Simple bash script to check and will try to update your system
 
@@ -27,7 +27,7 @@ elif command -v dnf &> /dev/null; then
   notify-send -i "$iDIR/ja.png" -u low 'Fedora system' 'has been updated.'
 elif command -v apt &> /dev/null; then
   # Debian-based (Debian, Ubuntu, etc.)
-  kitty -T update sudo apt update && sudo apt upgrade -y
+  kitty -T update bash -c "sudo apt update && sudo apt upgrade -y"
   notify-send -i "$iDIR/ja.png" -u low 'Debian/Ubuntu system' 'has been updated.'
 elif command -v zypper &> /dev/null; then
   # openSUSE-based
