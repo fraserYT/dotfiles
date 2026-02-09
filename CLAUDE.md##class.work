@@ -1,0 +1,122 @@
+# Claude Code Memory - Work Computer
+
+## System
+
+- **Machine**: Work Laptop
+- **CPU**: 11th Gen Intel Core i7-11370H @ 3.30GHz
+- **RAM**: 16GB
+- **Storage**: 512GB NVMe (KPART512GBC2DVT)
+- **OS**: Fedora 42 (Workstation Edition)
+- **DE**: Hyprland (KooL's Dots v2.3.19)
+- **Shell**: zsh
+
+---
+
+## Task Tracking
+
+This machine uses **beads** (`bd`) for task tracking. Tasks live in `~/.beads/` (git-tracked, will merge with yadm later).
+
+```bash
+bd ready              # What can I work on now?
+bd show <id>          # Full details on an issue
+bd update <id> --status=in_progress  # Start work
+bd close <id>         # Complete work
+bd list               # All open issues
+bd prime              # Full workflow context
+```
+
+**Current Epics:**
+- `claude-wp-ffo` - MF Kadence-Child Theme (P1) - Spotlightr migration, pressing prod work
+- `claude-wp-pj7` - MF Brand Plugin Phase 1 (P2) - Theme parity, on hold
+- `claude-wp-a8y` - Bio Theme Speed Improvements (P2) - On hold, biocon icons issue
+- `claude-wp-a79` - yadm Dotfiles Setup (P3) - Waiting on home laptop
+
+Run `bd ready` at session start to see available work.
+
+---
+
+## Projects
+
+Projects live in `~/Local Sites/` with nested subdirectories.
+
+### Active Projects
+
+| Project | Path | Description |
+|---------|------|-------------|
+| claude-wp | `~/Local Sites/claude-wp/` | WordPress multi-site (Bitesize Bio, Resources, LSM, Microscopy Focus) |
+| ActiveCampaign-Templates | `~/Local Sites/ActiveCampaign-Templates/` | Email templates |
+
+### claude-wp Project Summary
+
+Main WordPress development environment for Bitesize Bio properties.
+
+**Key Components:**
+- **Theme**: Bio (Kadence child theme) - `wp-content/themes/bio/`
+- **Plugin**: Bionic Blocks (ACF blocks) - `wp-content/plugins/bionic-blocks/`
+- **Plugin**: Microscopy Focus Brand - `wp-content/plugins/microscopy-focus-brand/`
+- **Theme**: MF kadence-child - `wp-content/themes/kadence-child/` (mf prod only)
+
+**Key Documentation:**
+- `~/Local Sites/claude-wp/app/public/CLAUDE.md` - Project-specific context
+- `~/Local Sites/claude-wp/app/public/PERFORMANCE-OPTIMIZATION-ROADMAP.md`
+- `~/Local Sites/claude-wp/app/public/VRT-TESTING-GUIDE.md`
+
+---
+
+## Dotfiles Management
+
+Using **yadm** to manage dotfiles across home and work laptops.
+
+- Repository: `https://github.com/fraserYT/dotfiles`
+- This machine's class: `work`
+- Home laptop class: `home`
+- Machine-specific files use `##class.work` / `##class.home` suffix
+
+Status tracked in beads: `claude-wp-a79`
+
+---
+
+## Reference
+
+### Lexicon
+
+| Term | Meaning |
+|------|---------|
+| **bsb** | Bitesize Bio (brand/company) |
+| **bsb prod/staging** | Bitesize Bio production/staging site |
+| **mf** | Microscopy Focus (brand/company) |
+| **mf prod/staging** | Microscopy Focus production/staging site |
+| **mf brand** | Microscopy Focus Brand Plugin |
+| **bionic** | Bio theme (the main theme) |
+| **mf child** | MF kadence-child theme (current theme on mf prod) |
+
+### Git Repositories
+
+| Repo | Location | Remote |
+|------|----------|--------|
+| Bio Theme | `~/Local Sites/claude-wp/.../themes/bio/` | github.com:bitesize-bio/bio.git |
+| Bionic Blocks | `~/Local Sites/claude-wp/.../plugins/bionic-blocks/` | *(check remote)* |
+| MF Brand | `~/Local Sites/claude-wp/.../plugins/microscopy-focus-brand/` | github.com:fraserYT/microscopy-focus-brand |
+| Dotfiles | *(not yet cloned)* | github.com:fraserYT/dotfiles |
+
+### Key Paths
+
+```
+~/CLAUDE.md                                          # This file
+~/Local Sites/claude-wp/.beads/                      # Task tracking database
+~/.config/hypr/                                      # Hyprland configs
+```
+
+---
+
+## Preferences
+
+- Prefers incremental changes over big rewrites
+- Values security over convenience
+- Tests in staging before production
+- Appreciates detailed documentation and actionable lists
+- Direct, technical communication style
+
+---
+
+**Last Updated:** February 6, 2026
