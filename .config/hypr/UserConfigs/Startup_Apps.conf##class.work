@@ -56,7 +56,7 @@ $livewallpaper=""
 exec-once = [workspace 1 silent] firefoxpwa site launch 01K1T7P658PJBEWBS5D55A4V6B
 exec-once = [workspace 2 silent] firefox
 exec-once = [workspace 3 silent] /home/fraser/.local/share/JetBrains/Toolbox/apps/phpstorm/bin/phpstorm
-exec-once = [workspace 4 silent] sh -c 'nm-online -s -q -t 30; env DESKTOPINTEGRATION=1 /home/fraser/AppImages/obsidian.appimage --no-sandbox'
+exec-once = [workspace 4 silent] sh -c 'nm-online -s -q -t 30; for i in $(seq 1 60); do gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.GetNameOwner org.freedesktop.secrets >/dev/null 2>&1 && break; sleep 0.5; done; env DESKTOPINTEGRATION=1 /home/fraser/AppImages/obsidian.appimage --no-sandbox'
 exec-once = [workspace 5 silent] slack
 exec-once = [workspace 10 silent] 1password
 exec-once = [workspace 14 silent] firefoxpwa site launch 01K1TA6XJSKGPS7P43B39RXHWP
