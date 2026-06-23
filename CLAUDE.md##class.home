@@ -3,10 +3,11 @@
 ## System
 
 - **Machine**: Lenovo IdeaPad Pro 5 16AKP10 (laptop)
-- **CPU**: AMD Ryzen AI 7 350 w/ Radeon 860M (8 cores, 16 threads)
+- **CPU**: AMD Ryzen AI 7 350 (8 cores, 16 threads)
+- **GPU**: NVIDIA GeForce RTX 5050 Max-Q / Mobile (GB207M, Blackwell) + AMD Radeon 860M iGPU (hybrid/Optimus)
 - **RAM**: 32GB
 - **Storage**: 1TB (LUKS encrypted)
-- **OS**: Fedora 42
+- **OS**: Fedora 44
 - **DE**: Hyprland (KooL's Dots config)
 - **Shell**: zsh
 
@@ -21,14 +22,102 @@ Using **yadm** to manage dotfiles across home and work laptops.
 
 Currently tracking: Hyprland configs (`.config/hypr/`)
 
+## Session Start
+
+At the start of every session, read `~/Claude/claude-hub/handoff.md`. If it contains an active handoff note, surface it before anything else.
+
 ## Projects
 
-Projects live in `~/Local/` with nested subdirectories. Each project can have its own `CLAUDE.md` for project-specific context.
+Claude-produced projects and docs live in `~/Claude/`. Other projects live in `~/Local/`. Each project can have its own `CLAUDE.md` for project-specific context.
 
-Current projects:
+Projects in `~/Claude/`:
+- `~/Claude/goals-dashboard/` - 2026 goals tracking PWA (SvelteKit + SQLite). Repo: `git@github.com:fraserYT/goals-dashboard.git` (private). Has harness-style CLAUDE.md with structured issues and session workflow.
+- `~/Claude/fl-studio-win/` - Windows 11 headless install scripts/docs for running FL Studio from external SSD.
+- `~/Claude/nwx-handover/` - Handover package for NWX client websites (WordPress). Claude-assisted editing workflow for non-technical users.
+- `~/Claude/bsb-strategy-system/` - Bitesize Bio technical automation (Make.com, PostgreSQL, Python scripts, Metabase). Repo: `git@github.com:fraserYT/bsb-strategy-system.git` (private). Fraser + Andy only.
+- `~/Claude/bsb-editorial-dashboard/` - Bitesize Bio editorial dashboard. Repo: `git@github.com:fraserYT/bsb-editorial-dashboard.git` (private).
+- `~/Claude/bsb-workspace/` - Bitesize Bio shared strategy/planning workspace. Repo: `git@github.com:fraserYT/bsb-workspace.git` (private). Multi-user (Fraser, Andy, Nick, Zara).
+- `~/Claude/claude-hub/` - Cross-machine context bridge (home laptop ↔ Mac Mini). Repo: `git@github.com:fraserYT/claude-hub.git` (private). Pull before session to get latest handoff.
+
+Other projects in `~/Local/` (not Claude-managed):
 - `~/Local/bio/`
 - `~/Local/ceretography/`
-- `~/Local/goals-dashboard/` - 2026 goals tracking PWA (SvelteKit + SQLite). Repo: `git@github.com:fraserYT/goals-dashboard.git` (private). Has harness-style CLAUDE.md with structured issues and session workflow.
+
+## Music Production
+
+- **DAW**: FL Studio 2025 (FL64.exe) running via **Bottles** (Flatpak, system install)
+- **Bottle name**: `FL-Studio` (win64, DXVK enabled, 150 DPI)
+- **Bottle path**: `~/.var/app/com.usebottles.bottles/data/bottles/bottles/FL-Studio/`
+- **Audio**: PipeWire (with PulseAudio bridge)
+- **MIDI controller**: Novation Launchpad Mini MK1 (USB Mini-B) — currently not working, suspected hardware failure (see below)
+
+### FL Studio Audio Crackling (2026-02-20)
+**Status**: Partially fixed — improved but not fully resolved.
+
+**Root cause of original BT issue**: A WirePlumber Lua config (`main.lua.d/51-bluetooth-codec.lua`) was silently ignored because WirePlumber 0.5 dropped Lua support. Without `bluez5.hfphsp-backend=none`, the HFP handshake was wedging the A2DP transport on every connection attempt.
+
+**Fixes applied**:
+1. Ported Lua config to WirePlumber 0.5 format → `~/.config/wireplumber/wireplumber.conf.d/51-bluetooth-codec.conf` (codecs: aac/sbc_xq/sbc, hfphsp-backend: none)
+2. Old Lua file renamed to `.bak` to silence boot warning
+3. Added 44100 Hz to PipeWire allowed rates → `~/.config/pipewire/pipewire.conf.d/10-fl-studio-rates.conf`
+4. Enabled `pulseaudio_latency: true` in Bottles FL-Studio `bottle.yml` (sets `PULSE_LATENCY_MSEC=60`)
+
+**Remaining FL Studio crackling issue**:
+- Crackles were introduced alongside the BT fix (likely related to WirePlumber state change)
+- FL Studio had to be switched from **FL Studio ASIO** → **Primary Sound Driver** because ASIO fails when BT is the default PipeWire sink
+- With WDM/Primary Sound Driver: FL Studio sends 44100 Hz internally but winepulse.drv connects to PipeWire at 48000 Hz → internal resampling causes clicks
+- **Next step to try**: In FL Studio Options → Audio Settings, change sample rate to **48000 Hz** to eliminate resampling
+- If that doesn't fully fix it: the deeper issue is that Bluetooth SBC is PipeWire's clock master when BT is default sink, causing graph-wide jitter. Fix would be to set FL Studio ASIO outputEndPoint explicitly to the internal speaker (`alsa_output.pci-0000_65_00.6.HiFi__Speaker__sink` — node 59 in wpctl), restoring pre-issue stable ASIO behaviour. OR investigate making ALSA the PipeWire clock source regardless of default sink.
+- **Note**: `api.alsa.acp.device` SPA handle fails on every boot (WirePlumber warning) — not directly causing crackles but worth investigating separately
+
+### FL Studio MIDI Fix (2026-02-18)
+**Status**: Applied — startup errors resolved, MIDI controller setup pending.
+
+**Problem**: FL Studio was throwing MIDI warnings on every startup. Wine's ALSA sequencer was exposing PipeWire internal clients (`PipeWire-System`, `PipeWire-RT-Event`) as MIDI input devices. FL Studio enabled them but they aren't real MIDI devices, causing errors. Duplicate `#2` entries also accumulated as sequencer client IDs shifted between sessions.
+
+**Fix applied**: Disabled all 4 stale virtual MIDI inputs in Wine registry (`user.reg`):
+- `PipeWire-RT-Event - input` → `"Enabled"="0"`
+- `PipeWire-RT-Event - input #2` → `"Enabled"="0"`
+- `PipeWire-System - input` → `"Enabled"="0"`
+- `PipeWire-System - input #2` → `"Enabled"="0"`
+
+**Backup**: `user.reg.bak.20260218` in the bottle directory.
+
+**Next step**: Once a working MIDI controller is available, configure it in FL Studio's MIDI settings (Options > MIDI Settings, enable the device, assign port 0).
+
+### Launchpad Mini MK1 USB Issue (2026-02-18)
+**Status**: Unresolved — suspected dead hardware.
+
+**Problem**: Launchpad fails to enumerate on USB. Kernel returns error -71 (protocol error) on every attempt — device descriptor read fails and device does not accept address.
+
+**Tested**:
+- 3 different USB Mini-B cables — all fail identically
+- Both USB-A ports (Bus 3 port 1 and port 2) — same result (both on same xHCI controller)
+- USB-C ports not tested (would need USB-A to USB-C adapter)
+
+**Next step**: Test the Launchpad on another computer to confirm hardware failure. If dead, replace.
+
+## Pending Tasks
+
+### Hibernate Setup
+**Status**: Not started — info gathered 2026-02-01, ready to implement next session.
+
+**Current state**:
+- 34GB swapfile at `/var/swap/swapfile` on btrfs (larger than 30Gi RAM — sufficient)
+- LUKS partition: `luks-06a2ddfc-829c-47f9-a8a0-ac7c859bba46`
+- Decrypted btrfs UUID: `02b5cb1f-7952-4871-aaa0-44aa5cb878a4`
+- 8GB zram also active (no conflict)
+- Kernel supports `disk` sleep state, hibernate service exists
+- **Not yet configured**: `resume=` and `resume_offset=` missing from kernel cmdline, initramfs doesn't include resume module
+
+**Steps to complete**:
+1. Get swapfile physical offset: `sudo btrfs inspect-internal map-swapfile -r /var/swap/swapfile`
+2. Add kernel params: `sudo grubby --update-kernel=ALL --args="resume=UUID=02b5cb1f-7952-4871-aaa0-44aa5cb878a4 resume_offset=<OFFSET>"`
+3. Rebuild initramfs: `sudo dracut --regenerate-all --force`
+4. Reboot
+5. Test: `sudo systemctl hibernate`
+6. Optional: check Secure Boot status (`mokutil --sb-state`) — may block hibernation on Fedora
+7. Optional: add hibernate option to Hyprland power menu / keybind
 
 ## Preferences
 
@@ -38,5 +127,7 @@ Current projects:
 
 <!-- Ongoing notes from our conversations -->
 - 2026-01-18: Set up fresh yadm configuration, planning to sync with work laptop later
-- 2026-01-18: Started goals-dashboard implementation - ~80% complete. Core features done (OAuth, services, cron, PWA, dashboard, all goal pages). See `~/Local/goals-dashboard/CLAUDE.md` for detailed progress notes and remaining tasks.
+- 2026-01-18: Started goals-dashboard implementation - ~80% complete. Core features done (OAuth, services, cron, PWA, dashboard, all goal pages). See `~/Claude/goals-dashboard/CLAUDE.md` for detailed progress notes and remaining tasks.
 - 2026-02-01: Set up harness for goals-dashboard. Initialized git, pushed to private GitHub repo, removed deprecated Fitbit code, restructured CLAUDE.md with deployment issues (DEPLOY-1 through DEPLOY-6) for Mac Mini migration. Next step: clone on Mac Mini and work through deployment issues.
+- 2026-02-18: Fixed FL Studio MIDI startup errors. Disabled stale PipeWire virtual MIDI inputs in Wine registry. Backup at `user.reg.bak.20260218`. Launchpad Mini MK1 fails to enumerate on USB (error -71) with 3 cables on both USB-A ports — likely dead hardware. Needs testing on another machine to confirm.
+- 2026-02-28: Windows 11 installer USB (SanDisk, `/dev/sda`) — boot fails with GRUB `hd0,gpt2 not found`. USB has GRUB+NTFS layout from an older script (not Ventoy, not current phase3). Fix: either re-run `phase3-windows-usb.sh` with the ISO, or mount sda1 and patch grub.cfg to use `search --set=root --label WIN11` instead of hardcoded `hd0`. Full notes in `~/Claude/fl-studio-win/README.md`.
