@@ -1,8 +1,10 @@
+[init]
+	defaultBranch = main
 [user]
+	name = Fraser
 	email = hi@fraser.yt
-	name = fraser
 [core]
 	editor = nano
 	pager = less -FRX
-[init]
-	defaultBranch = main
+[pager]
+	branch = false
