@@ -44,7 +44,31 @@ Projects live in `~/Local Sites/` with nested subdirectories.
 | Project | Path | Description |
 |---------|------|-------------|
 | claude-wp | `~/Local Sites/claude-wp/` | WordPress multi-site (Bitesize Bio, Resources, LSM, Microscopy Focus) |
-| ActiveCampaign-Templates | `~/Local Sites/ActiveCampaign-Templates/` | Email templates |
+| ActiveCampaign-Templates | `~/Local Sites/ActiveCampaign-Templates/` | HTML templates for ActiveCampaign newsletters & campaigns |
+| bsb-strategy-system | `~/Local Sites/bsb-strategy-system/` | Strategy planning system (PostgreSQL, Metabase, Make.com) |
+
+### ActiveCampaign-Templates Summary
+
+HTML templates for BsB email newsletters and campaigns, stored in ActiveCampaign.
+
+**Structure:**
+- `Core templates/` — main newsletter templates
+- `123 Templates/` — 123 series templates
+- `Event Templates/` — event-specific campaigns
+- `Lead Generation/` — lead gen campaigns
+- `podcasts/` — podcast-related templates
+- `Automated-email/` — automated email sequences
+- `archive/` — retired templates
+
+**Branch:** `master` (12 commits, last updated 2025-08-26)
+
+### bsb-strategy-system Summary
+
+Integrated planning and execution system for tracking strategic bets, projects, milestones, and focus cycles.
+
+**Key Documentation:** `~/Local Sites/bsb-strategy-system/claude.md`
+
+**Status:** Database schema complete, Metabase dashboards built, Make.com sync working. Daily check-in system designed. GitHub remote: `git@github.com:fraserYT/bsb-strategy-system.git`
 
 ### claude-wp Project Summary
 
@@ -97,7 +121,9 @@ Status tracked in beads: `claude-wp-a79`
 | Bio Theme | `~/Local Sites/claude-wp/.../themes/bio/` | github.com:bitesize-bio/bio.git |
 | Bionic Blocks | `~/Local Sites/claude-wp/.../plugins/bionic-blocks/` | *(check remote)* |
 | MF Brand | `~/Local Sites/claude-wp/.../plugins/microscopy-focus-brand/` | github.com:fraserYT/microscopy-focus-brand |
-| Dotfiles | *(not yet cloned)* | github.com:fraserYT/dotfiles |
+| AC Templates | `~/Local Sites/ActiveCampaign-Templates/` | github.com:bitesize-bio/ActiveCampaign-Templates.git |
+| Strategy System | `~/Local Sites/bsb-strategy-system/` | github.com:fraserYT/bsb-strategy-system.git |
+| Dotfiles | *(yadm managed)* | github.com:fraserYT/dotfiles |
 
 ### Key Paths
 
@@ -117,6 +143,31 @@ Status tracked in beads: `claude-wp-a79`
 - Appreciates detailed documentation and actionable lists
 - Direct, technical communication style
 
+### Communication & Planning
+
+Keep planning and communication lean. Rules:
+
+- **Brief, token-efficient replies.** Keep replies short. Direct answer first, then reasoning.
+- **Don't parrot** back what I've said. No pandering, no value judgments, no "you're right"-style agreement statements.
+- **One clarifying question max** per response.
+- **Numbered lists** for questions and steps.
+- **Long replies go to a disk note**, not the chat.
+- **Concrete examples with actual code** over prose descriptions.
+- **Never lie.** No claims about testing that didn't happen. Be transparent about optimization choices and tradeoffs.
+
+### Decision-making
+
+- Present 2-3 options with clear tradeoffs (pros/cons) and reasoning — don't guess.
+- If uncertain about tradeoffs, ask before proceeding.
+- I verify before you proceed.
+
+### Code quality
+
+- Production quality unless specified otherwise. Code-review mindset — this ships.
+- Correctness first: verify data types, library compatibilities.
+- Self-review: mentally test code before presenting.
+- Document and comment all code.
+
 ---
 
-**Last Updated:** February 6, 2026
+**Last Updated:** July 2, 2026
