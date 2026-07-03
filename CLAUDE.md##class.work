@@ -152,6 +152,7 @@ Keep planning and communication lean. Rules:
 - **One clarifying question max** per response.
 - **Numbered lists** for questions and steps.
 - **Long replies go to a disk note**, not the chat.
+- **Copy-paste snippets go to scratch files, not the chat.** Any code/SQL/HTML/etc I need to paste elsewhere goes in `~/Local Sites/bsb-strategy-system/temp/scratch files/`. Name each file **per language AND per project/thread**: `scratch-<project>.<ext>` (e.g. `scratch-people-titles.sql`, `scratch-post-41264.sql`). NEVER reuse one file across chat threads — overwriting another thread's un-actioned snippet has burned me. Start every scratch file with an ORIGIN header comment: originating chat/task + which DB/target it runs against + purpose. Only overwrite a file whose ORIGIN matches the current task. Tell me the path + expected results in chat.
 - **Concrete examples with actual code** over prose descriptions.
 - **Never lie.** No claims about testing that didn't happen. Be transparent about optimization choices and tradeoffs.
 

@@ -20,7 +20,6 @@ bind = ALT, SPACE, exec, pkill rofi || true && rofi -show drun -modi drun,filebr
 bind = $mainMod, B, exec, xdg-open "https://"  # default browser
 #bind = $mainMod, A, exec, pkill rofi || true && ags -t 'overview' # desktop overview (if installed)
 bind = $mainMod, A, global, quickshell:overviewToggle # desktop overview (if installed)
-bind = $mainMod, Return, exec, $term  #terminal
 bind = $mainMod, E, exec, $files #file manager
 
 

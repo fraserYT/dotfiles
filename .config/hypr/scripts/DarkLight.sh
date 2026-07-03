@@ -98,10 +98,12 @@ notify_user "$next_mode"
 # swaync color change
 if [ "$next_mode" = "Dark" ]; then
     sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(0, 0, 0, 0.8);/' "${swaync_style}"
+    sed -i 's/@define-color text-color .*;/@define-color text-color rgba(220, 220, 220, 0.95);/' "${swaync_style}"
 	#sed -i '/@define-color noti-bg-alt/s/#.*;/#111111;/' "${swaync_style}"
     sed -i 's|@define-color text-color .*;|@define-color text-color #FFFEF7;|' "${swaync_style}"
 else
     sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(255, 255, 255, 0.9);/' "${swaync_style}"
+    sed -i 's/@define-color text-color .*;/@define-color text-color @foreground;/' "${swaync_style}"
 	#sed -i '/@define-color noti-bg-alt/s/#.*;/#F0F0F0;/' "${swaync_style}"
     sed -i 's|@define-color text-color .*;|@define-color text-color #11131A;|' "${swaync_style}"
 fi
@@ -134,15 +136,8 @@ for pid_kitty in $(pidof kitty); do
     kill -SIGUSR1 "$pid_kitty"
 done
 
-# Set Dynamic Wallpaper for Dark or Light Mode
-if [ "$next_mode" = "Dark" ]; then
-    next_wallpaper="$(find -L "${dark_wallpapers}" -type f \( -iname "*.jpg" -o -iname "*.png" \) -print0 | shuf -n1 -z | xargs -0)"
-else
-    next_wallpaper="$(find -L "${light_wallpapers}" -type f \( -iname "*.jpg" -o -iname "*.png" \) -print0 | shuf -n1 -z | xargs -0)"
-fi
-
-# Update wallpaper using swww command
-$swww "${next_wallpaper}" $effect
+# Wallpaper change on mode toggle disabled — keep current wallpaper
+# $swww "${next_wallpaper}" $effect
 
 
 # Set Kvantum Manager theme & QT5/QT6 settings
