@@ -57,3 +57,20 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Beads task tracking - central database
 export BEADS_DB="$HOME/.beads/beads.db"
+
+# bsb-strategy-system: one git worktree per Claude window.
+# Several windows share this repo; when they also shared one checkout, a
+# checkout/reset/pull in any window mutated every other window's working tree
+# mid-task. `bsbwt <name>` puts this terminal in its own worktree first, so
+# launching claude here is isolated. Creates the worktree on first use.
+bsbwt() {
+  local repo="$HOME/Local Sites/bsb-strategy-system"
+  if [[ -z "$1" ]]; then
+    "$repo/scripts/wt.sh" list
+    return
+  fi
+  local dir
+  dir="$("$repo/scripts/wt.sh" new "$1")" || return
+  cd "$dir" || return
+  print -r -- "worktree: $dir  [$(git rev-parse --abbrev-ref HEAD)]"
+}
