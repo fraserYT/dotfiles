@@ -1,0 +1,19 @@
+[Unit]
+Description=Rewrite the "Claude threads ready to pick up" Todoist task from beads
+Documentation=file:///home/fraser/claude-hub/scripts/beads_todoist_digest.py
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/fraser/claude-hub
+# Same DNS gate as claude-hub-obsidian-sync: user-instance network-online.target
+# does not reflect real connectivity, so wait until api.todoist.com resolves.
+ExecStartPre=/usr/bin/bash -c 'for i in $(seq 1 30); do getent hosts api.todoist.com >/dev/null 2>&1 && exit 0; sleep 4; done; echo "api.todoist.com did not resolve within 120s" >&2; exit 1'
+ExecStart=/usr/bin/python3 /home/fraser/claude-hub/scripts/beads_todoist_digest.py --apply
+# Output goes to journalctl --user -u claude-hub-beads-digest.service
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

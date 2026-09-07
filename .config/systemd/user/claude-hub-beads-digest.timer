@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily beads -> Todoist digest (08:05 local, after the Obsidian sync)
+
+[Timer]
+OnCalendar=*-*-* 08:05:00
+# Persistent=true: if the laptop was off at 08:05, run as soon as it boots
+Persistent=true
+Unit=claude-hub-beads-digest.service
+
+[Install]
+WantedBy=timers.target
