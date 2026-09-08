@@ -89,6 +89,18 @@ Main WordPress development environment for Bitesize Bio properties.
 
 ---
 
+## Audio (speaker silent, headphones fine) — fixed 2026-09-08
+
+Hardware is fine (Conexant CX11880 via SOF, `sof-hda-dsp`). Cause was WirePlumber's saved
+Speaker route volume sitting at exactly 0 in `~/.local/state/wireplumber/default-routes`,
+so every switch from headphones to speaker restored silence. Headphones have their own route entry.
+
+Check (nothing plugged in): `wpctl get-volume @DEFAULT_AUDIO_SINK@` — 0.00 means it's back.
+Fix: `wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.40` — WirePlumber persists it immediately.
+Do NOT touch the headphone route, `51-bluetooth-hfp.conf`, or codec/module options for this.
+
+---
+
 ## Dotfiles Management
 
 Using **yadm** to manage dotfiles across home and work laptops.
@@ -173,4 +185,4 @@ Keep planning and communication lean. Rules:
 
 ---
 
-**Last Updated:** August 6, 2026
+**Last Updated:** September 8, 2026
