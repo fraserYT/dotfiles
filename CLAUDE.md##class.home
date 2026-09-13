@@ -24,7 +24,7 @@ Currently tracking: Hyprland configs (`.config/hypr/`)
 
 ## Session Start
 
-At the start of every session, read `~/Claude/claude-hub/handoff.md`. If it contains an active handoff note, surface it before anything else.
+At the start of every session, read `~/Claude/simstim/handoff.md`. If it contains an active handoff note, surface it before anything else.
 
 ## Projects
 
@@ -37,7 +37,7 @@ Projects in `~/Claude/`:
 - `~/Claude/bsb-strategy-system/` - Bitesize Bio technical automation (Make.com, PostgreSQL, Python scripts, Metabase). Repo: `git@github.com:fraserYT/bsb-strategy-system.git` (private). Fraser + Andy only.
 - `~/Claude/bsb-editorial-dashboard/` - Bitesize Bio editorial dashboard. Repo: `git@github.com:fraserYT/bsb-editorial-dashboard.git` (private).
 - `~/Claude/bsb-workspace/` - Bitesize Bio shared strategy/planning workspace. Repo: `git@github.com:fraserYT/bsb-workspace.git` (private). Multi-user (Fraser, Andy, Nick, Zara).
-- `~/Claude/claude-hub/` - Cross-machine context bridge (home laptop ↔ Mac Mini). Repo: `git@github.com:fraserYT/claude-hub.git` (private). Pull before session to get latest handoff.
+- `~/Claude/simstim/` - Cross-machine context bridge (OnoSendai ↔ Guybrush ↔ DixieFlatline). Repo: `git@github.com:fraserYT/simstim.git` (private). Renamed from `claude-hub` 2026-09-08. Pull before session to get latest handoff.
 
 Other projects in `~/Local/` (not Claude-managed):
 - `~/Local/bio/`
