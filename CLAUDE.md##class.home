@@ -20,7 +20,13 @@ Using **yadm** to manage dotfiles across home and work laptops.
 - Work laptop class: `work`
 - Machine-specific files use `##class.home` / `##class.work` suffix
 
-Currently tracking: Hyprland configs (`.config/hypr/`)
+Currently tracking: Hyprland configs (`.config/hypr/`), `.ssh/config`, `.zshrc`, this file.
+
+⚠️ **`~/CLAUDE.md` is a generated yadm alternate — never edit it directly.** yadm tracks
+`CLAUDE.md##class.home` / `##class.work` and regenerates `~/CLAUDE.md` from the matching one
+automatically after `add`/`commit`/`checkout`. Edits made to the generated file are destroyed the
+next time any yadm command runs. **Edit `CLAUDE.md##class.home`, then `yadm alt`.** This bit once:
+the 2026-09-08 simstim rename was written to the generated file and silently lost on 2026-09-13.
 
 ## Session Start
 
@@ -32,7 +38,7 @@ Claude-produced projects and docs live in `~/Claude/`. Other projects live in `~
 
 Projects in `~/Claude/`:
 - `~/Claude/goals-dashboard/` - 2026 goals tracking PWA (SvelteKit + SQLite). Repo: `git@github.com:fraserYT/goals-dashboard.git` (private). Has harness-style CLAUDE.md with structured issues and session workflow.
-- `~/Claude/fl-studio-win/` - Windows 11 headless install scripts/docs for running FL Studio from external SSD.
+- `~/Claude/fl-studio-win/` - Now holds the **disk repartition plan** (`repartition-plan.md`). The original "Windows 11 headless from external SSD" plan was abandoned. ⚠️ `phase2a/2b/2c` scripts carry sector values that **predate the Windows install and would destroy it if run** — treat as stale.
 - `~/Claude/nwx-handover/` - Handover package for NWX client websites (WordPress). Claude-assisted editing workflow for non-technical users.
 - `~/Claude/bsb-strategy-system/` - Bitesize Bio technical automation (Make.com, PostgreSQL, Python scripts, Metabase). Repo: `git@github.com:fraserYT/bsb-strategy-system.git` (private). Fraser + Andy only.
 - `~/Claude/bsb-editorial-dashboard/` - Bitesize Bio editorial dashboard. Repo: `git@github.com:fraserYT/bsb-editorial-dashboard.git` (private).
@@ -45,45 +51,23 @@ Other projects in `~/Local/` (not Claude-managed):
 
 ## Music Production
 
-- **DAW**: FL Studio 2025 (FL64.exe) running via **Bottles** (Flatpak, system install)
-- **Bottle name**: `FL-Studio` (win64, DXVK enabled, 150 DPI)
-- **Bottle path**: `~/.var/app/com.usebottles.bottles/data/bottles/bottles/FL-Studio/`
-- **Audio**: PipeWire (with PulseAudio bridge)
+- **DAW**: FL Studio 2025 (FL64.exe) running **natively on the dual-boot Windows partition**
+- **Bottles/Wine**: removed 2026-09-13 (flatpak uninstalled; `~/.var/app/com.usebottles.bottles`, `~/.local/share/bottles` and `~/.wine` deleted). FL Studio has run natively for months — the Linux-side audio stack no longer sits between FL Studio and the hardware.
+- **Audio (Linux side)**: PipeWire (with PulseAudio bridge)
 - **MIDI controller**: Novation Launchpad Mini MK1 (USB Mini-B) — currently not working, suspected hardware failure (see below)
 
-### FL Studio Audio Crackling (2026-02-20)
-**Status**: Partially fixed — improved but not fully resolved.
+### Historical: Bottles-era audio + MIDI notes (superseded 2026-09-13)
+FL Studio ran under Bottles/Wine until 2026-09-13. Two long sections used to live here — the
+**Audio Crackling** investigation (2026-02-20) and the **MIDI Fix** (2026-02-18). Both described
+Wine/Bottles internals that no longer exist: the `winepulse.drv` resampling crackle, the
+FL Studio ASIO vs Primary Sound Driver tradeoff, and the disabled PipeWire virtual MIDI inputs in
+the Wine registry. The `user.reg.bak.20260218` backup they referenced was deleted with the bottle.
+Removed rather than kept as noise; recoverable from git history if ever needed.
 
-**Root cause of original BT issue**: A WirePlumber Lua config (`main.lua.d/51-bluetooth-codec.lua`) was silently ignored because WirePlumber 0.5 dropped Lua support. Without `bluez5.hfphsp-backend=none`, the HFP handshake was wedging the A2DP transport on every connection attempt.
-
-**Fixes applied**:
-1. Ported Lua config to WirePlumber 0.5 format → `~/.config/wireplumber/wireplumber.conf.d/51-bluetooth-codec.conf` (codecs: aac/sbc_xq/sbc, hfphsp-backend: none)
-2. Old Lua file renamed to `.bak` to silence boot warning
-3. Added 44100 Hz to PipeWire allowed rates → `~/.config/pipewire/pipewire.conf.d/10-fl-studio-rates.conf`
-4. Enabled `pulseaudio_latency: true` in Bottles FL-Studio `bottle.yml` (sets `PULSE_LATENCY_MSEC=60`)
-
-**Remaining FL Studio crackling issue**:
-- Crackles were introduced alongside the BT fix (likely related to WirePlumber state change)
-- FL Studio had to be switched from **FL Studio ASIO** → **Primary Sound Driver** because ASIO fails when BT is the default PipeWire sink
-- With WDM/Primary Sound Driver: FL Studio sends 44100 Hz internally but winepulse.drv connects to PipeWire at 48000 Hz → internal resampling causes clicks
-- **Next step to try**: In FL Studio Options → Audio Settings, change sample rate to **48000 Hz** to eliminate resampling
-- If that doesn't fully fix it: the deeper issue is that Bluetooth SBC is PipeWire's clock master when BT is default sink, causing graph-wide jitter. Fix would be to set FL Studio ASIO outputEndPoint explicitly to the internal speaker (`alsa_output.pci-0000_65_00.6.HiFi__Speaker__sink` — node 59 in wpctl), restoring pre-issue stable ASIO behaviour. OR investigate making ALSA the PipeWire clock source regardless of default sink.
-- **Note**: `api.alsa.acp.device` SPA handle fails on every boot (WirePlumber warning) — not directly causing crackles but worth investigating separately
-
-### FL Studio MIDI Fix (2026-02-18)
-**Status**: Applied — startup errors resolved, MIDI controller setup pending.
-
-**Problem**: FL Studio was throwing MIDI warnings on every startup. Wine's ALSA sequencer was exposing PipeWire internal clients (`PipeWire-System`, `PipeWire-RT-Event`) as MIDI input devices. FL Studio enabled them but they aren't real MIDI devices, causing errors. Duplicate `#2` entries also accumulated as sequencer client IDs shifted between sessions.
-
-**Fix applied**: Disabled all 4 stale virtual MIDI inputs in Wine registry (`user.reg`):
-- `PipeWire-RT-Event - input` → `"Enabled"="0"`
-- `PipeWire-RT-Event - input #2` → `"Enabled"="0"`
-- `PipeWire-System - input` → `"Enabled"="0"`
-- `PipeWire-System - input #2` → `"Enabled"="0"`
-
-**Backup**: `user.reg.bak.20260218` in the bottle directory.
-
-**Next step**: Once a working MIDI controller is available, configure it in FL Studio's MIDI settings (Options > MIDI Settings, enable the device, assign port 0).
+**Still live from that work** (not Bottles-specific): the WirePlumber 0.5 Lua-config fix at
+`~/.config/wireplumber/wireplumber.conf.d/51-bluetooth-codec.conf`, and the PipeWire allowed-rates
+file `~/.config/pipewire/pipewire.conf.d/10-fl-studio-rates.conf`. The `api.alsa.acp.device` SPA
+handle warning on every boot is also still unexplained.
 
 ### Launchpad Mini MK1 USB Issue (2026-02-18)
 **Status**: Unresolved — suspected dead hardware.
@@ -110,6 +94,9 @@ Other projects in `~/Local/` (not Claude-managed):
 - Kernel supports `disk` sleep state, hibernate service exists
 - **Not yet configured**: `resume=` and `resume_offset=` missing from kernel cmdline, initramfs doesn't include resume module
 
+⚠️ **If the disk repartition happens first, this must be redone.** `resume_offset` is a physical
+block offset, so any btrfs resize or swapfile move invalidates it — a stale value fails to resume.
+
 **Steps to complete**:
 1. Get swapfile physical offset: `sudo btrfs inspect-internal map-swapfile -r /var/swap/swapfile`
 2. Add kernel params: `sudo grubby --update-kernel=ALL --args="resume=UUID=02b5cb1f-7952-4871-aaa0-44aa5cb878a4 resume_offset=<OFFSET>"`
@@ -132,3 +119,4 @@ Other projects in `~/Local/` (not Claude-managed):
 - 2026-02-18: Fixed FL Studio MIDI startup errors. Disabled stale PipeWire virtual MIDI inputs in Wine registry. Backup at `user.reg.bak.20260218`. Launchpad Mini MK1 fails to enumerate on USB (error -71) with 3 cables on both USB-A ports — likely dead hardware. Needs testing on another machine to confirm.
 - 2026-02-28: Windows 11 installer USB (SanDisk, `/dev/sda`) — boot fails with GRUB `hd0,gpt2 not found`. USB has GRUB+NTFS layout from an older script (not Ventoy, not current phase3). Fix: either re-run `phase3-windows-usb.sh` with the ISO, or mount sda1 and patch grub.cfg to use `search --set=root --label WIN11` instead of hardcoded `hd0`. Full notes in `~/Claude/fl-studio-win/README.md`.
 - 2026-06-24: FC44 post-upgrade restoration complete — Hyprland 0.55.4 (sdegler COPR) reboot-tested OK, audio healthy. Hyprland 0.53→0.55 broke the windowrule/config grammar → 3020 errors with KooL dots v2.3.19. Migrated configs to 0.55 syntax in place (new `match:`-first windowrules with `on/off`; removed `pseudotile`/`vfr`; `togglesplit`→`layoutmsg, togglesplit`). Fixed black borders (panel forced to a custom 3:2 mode → set native 2880x1800@120 scale 1.5). **Class-split 6 shared hypr files** (`##class.home` = new 0.55 syntax, `##class.work` = old syntax) so the work laptop (still on old Hyprland until its own upgrade) is unaffected. Full syntax reference in Claude memory `project_hyprland_055_config_migration`.
+- 2026-09-13: **Emulation-stack clearout complete — 254.0 GiB freed** (btrfs Used 368.68 → 114.69 GiB; `/` 51% → 16%). Removed Bottles (flatpak + all data dirs), winboat, Kali VM + save-state + ISO, `~/.wine`. `/boot` 91% → 69% (fc42 kernel removed, `installonly_limit=2`). FL Studio confirmed running natively on the Windows partition, so the Bottles-era audio/MIDI notes were collapsed to a historical stub. Separately: enrolled this machine's SSH key on **Guybrush** (Mac mini, `frasersmith@192.168.0.73`) and added an `ssh guybrush` alias to `~/.ssh/config` (now yadm-tracked, shared); moved the 63G `SamplesFromMars Complete.zip` to Guybrush `~/Music/` (md5-verified, `~/Downloads` then emptied). **macOS TCC blocks SSH writes to Guybrush's `~/Documents`/`~/Desktop`/`~/Downloads`** — use `~`, `/Users/Shared` or `~/Music` until sshd is granted Full Disk Access; full notes in simstim `memory/reference_guybrush_remote_access.md`.
