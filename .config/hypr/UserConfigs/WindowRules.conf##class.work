@@ -124,6 +124,9 @@ windowrule = workspace 2, tag:browser*
 # other --app window on 127.0.0.1 is unaffected. Later rule wins, so it must stay below line 117.
 # Add `silent` after the 7 if it should open there without pulling focus.
 windowrule = workspace 7, class:^(chrome-127\.0\.0\.1__-Default)$
+# Dial (radio) app window -> workspace 20. Same reason as Bunsen: the class comes from the URL
+# (frasers-Mac-mini.local:8090), so it also matches the PWA tag rule and must stay below line 117.
+windowrule = workspace 20, class:^(chrome-frasers-mac-mini\.local__-Default)$
 #windowrule = workspace 3, class:^([Tt]hunar)$
 #windowrule = workspace 3, tag:projects*
 windowrule = workspace 5, tag:gamestore*

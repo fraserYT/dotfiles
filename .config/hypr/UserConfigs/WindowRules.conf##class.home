@@ -113,6 +113,9 @@ windowrule = match:fullscreen 1, idle_inhibit fullscreen
 # windowrule move to workspace
 windowrule = match:tag email, workspace 1
 windowrule = match:tag browser, workspace 2
+# Dial (radio) app window -> workspace 20. Chromium names --app windows after the URL, so it
+# also gets the browser tag above; this later rule wins.
+windowrule = match:class ^(chrome-frasers-mac-mini\.local__-Default)$, workspace 20
 #windowrule = match:class ^([Tt]hunar)$, workspace 3
 #windowrule = match:tag projects, workspace 3
 windowrule = match:tag gamestore, workspace 5
