@@ -116,14 +116,15 @@ windowrule = idleinhibit fullscreen, fullscreen:1
 windowrule = workspace 1, tag:email*
 windowrule = workspace 2, tag:browser*
 
-# Bunsen dashboard -> workspace 7.
+# Bunsen dashboard -> workspace 1 (moved from 7 on 2026-09-28, Fraser: the day starts there; it
+# shares 1 with the tag:email* windows).
 # It is not a missing rule that sent it to 2, it is a correct one: Chromium ignores --class for
 # app windows on Wayland and derives the class from the URL, so the window comes up as
 # chrome-127.0.0.1__-Default, matches the Chrome PWA tag rule above, and follows tag:browser* to
 # workspace 2. This pins that one window by class AND title, so the PWA rule is left alone and any
 # other --app window on 127.0.0.1 is unaffected. Later rule wins, so it must stay below line 117.
-# Add `silent` after the 7 if it should open there without pulling focus.
-windowrule = workspace 7, class:^(chrome-127\.0\.0\.1__-Default)$
+# Add `silent` after the 1 if it should open there without pulling focus.
+windowrule = workspace 1, class:^(chrome-127\.0\.0\.1__-Default)$
 # Dial (radio) app window -> workspace 20. Same reason as Bunsen: the class comes from the URL
 # (frasers-Mac-mini.local:8090), so it also matches the PWA tag rule and must stay below line 117.
 windowrule = workspace 20, class:^(chrome-frasers-mac-mini\.local__-Default)$
