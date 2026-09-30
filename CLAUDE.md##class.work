@@ -165,10 +165,41 @@ Keep planning and communication lean. Rules:
 - **Don't parrot** back what I've said. No pandering, no value judgments, no "you're right"-style agreement statements.
 - **One clarifying question max** per response.
 - **Numbered lists** for questions and steps.
-- **Long replies go to a disk note**, not the chat.
+- **Long replies stay in the chat.** Structure them with headings, tables and short lists rather than
+  offloading to a file. (Reversed 2026-09-17: the old "write long replies to a disk note" rule meant
+  hunting for files and a pile of notes never reopened.) Write a file only when I ask for one, or when
+  it is a copy-paste snippet — see the scratch-file rule below, which still stands.
 - **Copy-paste snippets go to scratch files, not the chat.** Any code/SQL/HTML/etc I need to paste elsewhere goes in `~/Local Sites/bsb-strategy-system/temp/scratch files/`. Name each file **per language AND per project/thread**: `scratch-<project>.<ext>` (e.g. `scratch-people-titles.sql`, `scratch-post-41264.sql`). NEVER reuse one file across chat threads — overwriting another thread's un-actioned snippet has burned me. Start every scratch file with an ORIGIN header comment: originating chat/task + which DB/target it runs against + purpose. Only overwrite a file whose ORIGIN matches the current task. Tell me the path + expected results in chat. Sevalla Postgres scratch SQL runs in Drizzle Studio: NO `BEGIN`/`COMMIT`/`END`/`ROLLBACK` keywords (Studio batches statements in its own transaction and errors on non-trailing transaction keywords).
 - **Concrete examples with actual code** over prose descriptions.
 - **Never lie.** No claims about testing that didn't happen. Be transparent about optimization choices and tradeoffs.
+
+### Session close ("rcp")
+
+"rcp" / "recap" ends a session. It is four things, not one, and the commit is not optional:
+
+1. **Write the handover note** in `~/Local Sites/bsb-architecture/memory/` as
+   `<weekday>-<yyyy-mm-dd>-first-thing.md` whenever work carries over — the single job to do first,
+   with the exact command, what is already done, and what is deliberately left. Add its one-line
+   entry to `MEMORY.md`. Check whether another thread has already claimed that day and say so.
+   Open this thread's `## ` section with the two lists Bunsen's daily review shows as the short
+   version (prose follows them; `planner/handover.py` parses exactly these labels):
+   ```
+   **Carry over:**
+   - [ ] one line per task Fraser carries into today
+   **Worked on:**
+   - one line per thing this thread did
+   ```
+2. **Commit the memory files** — `git -C "$HOME/Local Sites/bsb-architecture" add memory/` and
+   commit. Stage `memory/` only, never `-A`, and note in the message that other threads may still
+   have been writing. Push only if I ask.
+3. **Mark the chat wrapped** — `"$HOME/Local Sites/bunsen/bin/bunsen" threads wrapped me`, as the
+   last tool call of the session. `me` resolves the session from the process the command runs in,
+   so there is nothing to look up. This is the only signal Bunsen gets that a session ended tidily:
+   without it the fleet view files a properly closed chat under `dropped`, next to the ones that
+   were simply abandoned. The marker lapses by itself if the conversation carries on more than two
+   minutes afterwards, so run it again at the real close.
+4. **Recap in chat** — what landed, what is still open, what is owed next, and anything left
+   uncommitted or unverified. Say plainly what was not finished.
 
 ### Decision-making
 
