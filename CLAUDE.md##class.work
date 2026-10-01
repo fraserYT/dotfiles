@@ -189,9 +189,11 @@ Keep planning and communication lean. Rules:
    **Worked on:**
    - one line per thing this thread did
    ```
-2. **Commit the memory files** — `git -C "$HOME/Local Sites/bsb-architecture" add memory/` and
-   commit. Stage `memory/` only, never `-A`, and note in the message that other threads may still
-   have been writing. Push only if I ask.
+2. **Commit and push** — rcp = remember, commit, push; the push is implicit, never ask. Memory:
+   `git -C "$HOME/Local Sites/bsb-architecture" add memory/`, commit, push. Stage `memory/` only,
+   never `-A`, and note in the message that other threads may still have been writing. Then commit
+   and push every repo/branch this thread touched (`git push -u origin <branch>` for new branches).
+   A branch that has diverged from its remote is never force-pushed: report it in the recap.
 3. **Mark the chat wrapped** — `"$HOME/Local Sites/bunsen/bin/bunsen" threads wrapped me`, as the
    last tool call of the session. `me` resolves the session from the process the command runs in,
    so there is nothing to look up. This is the only signal Bunsen gets that a session ended tidily:
