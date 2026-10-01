@@ -1,0 +1,7 @@
+# Low-battery warning check. Triggered by battery-notify.timer.
+[Unit]
+Description=Low battery notification check
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/battery-notify.sh

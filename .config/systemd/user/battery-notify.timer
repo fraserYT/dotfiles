@@ -1,0 +1,12 @@
+# Runs battery-notify.service every 2 minutes while logged in.
+# AccuracySec tightened: the default 1min slop made it fire every ~3 minutes.
+[Unit]
+Description=Periodic low battery check
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=2min
+AccuracySec=10s
+
+[Install]
+WantedBy=timers.target
