@@ -1,0 +1,7 @@
+; Personal identity. Pulled in by the [includeIf] blocks in ~/.gitconfig for
+; repos that are not work (simstim, goals-dashboard, Dev/, personal-projects/ …).
+; Everything else, including work repos, uses the global identity
+; (Fraser Smith <fraser@bitesizebio.com>). yadm-tracked, shared by both machines.
+[user]
+	name = Fraser Smith
+	email = hi@fraser.yt

@@ -1,8 +1,29 @@
 [init]
 	defaultBranch = main
 [user]
-	name = Fraser
-	email = hi@fraser.yt
+	name = Fraser Smith
+	email = fraser@bitesizebio.com
+; Work identity above is the default: work is the common case on both Dixie
+; and OnoSendai. Personal repos opt out below. Shared by yadm, so the list
+; covers both machines' layouts. Interim until the ~/Claude/ restructure, when
+; this flips to "work identity under the work folder" (2026-10-01).
+; Conditional includes match on the repo's gitdir, so they apply to worktrees
+; too and to any new repo created under the matched path. ~/simstim is a
+; symlink on Ono, hence both spellings.
+[includeIf "gitdir:~/simstim/"]
+	path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Claude/simstim/"]
+	path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Claude/goals-dashboard/"]
+	path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Claude/fl-studio-win/"]
+	path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Claude/nwx-handover/"]
+	path = ~/.gitconfig-personal
+[includeIf "gitdir:~/personal-projects/"]
+	path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Dev/"]
+	path = ~/.gitconfig-personal
 [core]
 	editor = nano
 	pager = less -FRX
@@ -14,3 +35,5 @@
 [credential "https://gist.github.com"]
 	helper =
 	helper = !/usr/bin/gh auth git-credential
+[beads]
+	role = maintainer
