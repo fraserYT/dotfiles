@@ -14,6 +14,9 @@ windowrule = match:class ^([Mm]icrosoft-edge(-stable|-beta|-dev|-unstable))$, ta
 windowrule = match:class ^(Brave-browser(-beta|-dev|-unstable)?)$, tag +browser
 windowrule = match:class ^([Tt]horium-browser|[Cc]achy-browser)$, tag +browser
 windowrule = match:class ^(zen-alpha|zen)$, tag +browser
+# Dial (radio): matches the Chrome-PWA tag pattern above, but must not take the browser
+# workspace rule - on Hyprland 0.55 the tag rule wins over a later class rule, so drop the tag.
+windowrule = match:class ^(chrome-frasers-mac-mini\.local__-Default)$, tag -browser
 
 # notif tags
 windowrule = match:class ^(swaync-control-center|swaync-notification-window|swaync-client|class)$, tag +notif
