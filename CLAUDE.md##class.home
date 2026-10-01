@@ -39,7 +39,7 @@ Claude-produced projects and docs live in `~/Claude/`. Other projects live in `~
 Projects in `~/Claude/`:
 - `~/Claude/goals-dashboard/` - 2026 goals tracking PWA (SvelteKit + SQLite). Repo: `git@github.com:fraserYT/goals-dashboard.git` (private). Has harness-style CLAUDE.md with structured issues and session workflow.
 - `~/Claude/fl-studio-win/` - Now holds the **disk repartition plan** (`repartition-plan.md`). The original "Windows 11 headless from external SSD" plan was abandoned. ⚠️ `phase2a/2b/2c` scripts carry sector values that **predate the Windows install and would destroy it if run** — treat as stale.
-- `~/Claude/nwx-handover/` - Handover package for NWX client websites (WordPress). Claude-assisted editing workflow for non-technical users.
+- NWX handover (ended freelance work) - archived 2026-10-01 to `guybrush:~/Archive/nwx-handover-2026-10-01.tar.zst`.
 - `~/Claude/bsb-strategy-system/` - Bitesize Bio technical automation (Make.com, PostgreSQL, Python scripts, Metabase). Repo: `git@github.com:fraserYT/bsb-strategy-system.git` (private). Fraser + Andy only.
 - `~/Claude/bsb-editorial-dashboard/` - Bitesize Bio editorial dashboard. Repo: `git@github.com:fraserYT/bsb-editorial-dashboard.git` (private).
 - `~/Claude/bsb-workspace/` - Bitesize Bio shared strategy/planning workspace. Repo: `git@github.com:fraserYT/bsb-workspace.git` (private). Multi-user (Fraser, Andy, Nick, Zara).

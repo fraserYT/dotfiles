@@ -18,8 +18,6 @@
 	path = ~/.gitconfig-personal
 [includeIf "gitdir:~/Claude/fl-studio-win/"]
 	path = ~/.gitconfig-personal
-[includeIf "gitdir:~/Claude/nwx-handover/"]
-	path = ~/.gitconfig-personal
 [includeIf "gitdir:~/personal-projects/"]
 	path = ~/.gitconfig-personal
 [includeIf "gitdir:~/Dev/"]
