@@ -1,0 +1,14 @@
+# User keymap for Midnight Commander. Merged over /etc/mc/mc.keymap:
+# only the commands listed here are changed, everything else keeps its default.
+#
+# Why: Tab is muscle memory for shell completion. mc's default completion key
+# (alt-tab) is swallowed by Hyprland's window cycling, so it never reached mc.
+# Tab now completes on the command line; Shift-Tab switches panels.
+
+[filemanager]
+# Default was: tab; ctrl-i  (ctrl-i is the same byte as Tab, so it must go too)
+ChangePanel = shift-tab
+
+[input]
+# Default was: alt-tab. alt-tab kept as a fallback for terminals outside Hyprland.
+Complete = tab; alt-tab
