@@ -1,0 +1,10 @@
+# Per-site exceptions to the bsb-code-guards secrets rule. One ERE per line; `#` comments allowed.
+# Ruled by Fraser, 2 Oct 2026: a site deemed safe for Claude to reach directly (a staging site,
+# never live) gets its SSH key and connection file listed here. Every other site stays blocked
+# until it is approved and added, per site. Say which site, who approved it and when.
+# yadm-tracked, so Dixie and OnoSendai share it.
+
+# newbrandstaging.kinsta.cloud (BSB rebrand staging, a prod clone behind HTTP auth). Approved by
+# Fraser, 2 Oct 2026, in the newbrand-tour thread.
+\.ssh/newbrand_ed25519
+\.config/nucleus/newbrand\.conf
