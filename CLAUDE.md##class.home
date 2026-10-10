@@ -49,6 +49,9 @@ Other projects in `~/Local/` (not Claude-managed):
 - `~/Local/bio/`
 - `~/Local/ceretography/`
 
+Personal creative projects elsewhere:
+- `~/Videos/Ultras/` - "Ultras" lyric music video (FilmCraft + EffectCraft via MCP). Local git, no remote. **Launch Claude Code from that folder** so the MCP tools load. Status/resume steps in its `CLAUDE.md`; cross-machine note in simstim `memory/project_ultras_lyric_video.md`.
+
 ## Music Production
 
 - **DAW**: FL Studio 2025 (FL64.exe) running **natively on the dual-boot Windows partition**
