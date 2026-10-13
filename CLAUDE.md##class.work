@@ -194,14 +194,42 @@ Keep planning and communication lean. Rules:
    never `-A`, and note in the message that other threads may still have been writing. Then commit
    and push every repo/branch this thread touched (`git push -u origin <branch>` for new branches).
    A branch that has diverged from its remote is never force-pushed: report it in the recap.
+   **Worktree lifecycle (ruled 2026-10-01):** a thread's branch is pushed with a PR open before the
+   thread goes idle; once the PR merges, the thread removes its worktree (`git worktree remove`), the
+   Local Sites symlink and the local branch. The main checkout stays on `main`. Fifteen merged trees
+   sat unremoved for weeks and read as lost work: the losses were lifecycle, not concurrency.
 3. **Mark the chat wrapped** — `"$HOME/Local Sites/bunsen/bin/bunsen" threads wrapped me`, as the
    last tool call of the session. `me` resolves the session from the process the command runs in,
-   so there is nothing to look up. This is the only signal Bunsen gets that a session ended tidily:
+   so there is nothing to look up. It also releases every area this thread claimed in Bunsen (see
+   Master thread below), so a tidy close never shows as a stale holder in the morning. This is the only signal Bunsen gets that a session ended tidily:
    without it the fleet view files a properly closed chat under `dropped`, next to the ones that
    were simply abandoned. The marker lapses by itself if the conversation carries on more than two
    minutes afterwards, so run it again at the real close.
+   **It also ends the session (ruled 2026-10-13):** once the recap is written and the thread has
+   gone quiet, a detached watcher stops the `claude --bg` session (or exits the terminal one), so
+   no finished daemon sits in the fleet. Fraser excludes a session, that session only, by saying
+   so: then run `threads wrapped me --keep` instead (or `bunsen threads keep me` earlier on). A
+   reply from Fraser after the marker stands the watcher down along with the marker.
 4. **Recap in chat** — what landed, what is still open, what is owed next, and anything left
    uncommitted or unverified. Say plainly what was not finished.
+
+### Master thread and claims (ruled 2026-10-01, built 2026-10-02)
+
+One thread a day is the **master**: a cockpit, never a switchboard. It is opened from
+`~/Local Sites` and told `/master`; it runs the morning review, hears what Fraser intends to work
+on, sorts each item into resume / new thread with a brief / no thread, and records that in Bunsen
+(`bunsen claims`). It never edits a repo. Every other thread reads the claims at start through a
+SessionStart hook (`bunsen claims hook`): who the master is, what this thread holds, any brief
+waiting for the repo it sits in, and a warning if that repo is claimed by another live thread.
+No thread ever waits on the master for a reply.
+
+- Before editing in a thread: `bunsen claims claim <area> --repo <name> --brief "..."` (one line;
+  the hook tells you if a brief is already waiting for the repo, in which case `claim <area>` picks
+  it up).
+- A repo the hook says is held by another live thread is not edited here: switch to that thread,
+  or ask the master to reassign.
+- `bunsen worktrees` is the lifecycle audit: parked, dirty, push, pr, open, remove. The thread that
+  owns a tree runs the printed command; nothing else removes it.
 
 ### Decision-making
 
@@ -218,4 +246,4 @@ Keep planning and communication lean. Rules:
 
 ---
 
-**Last Updated:** September 8, 2026
+**Last Updated:** October 2, 2026
