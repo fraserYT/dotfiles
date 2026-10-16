@@ -51,7 +51,7 @@ Other projects in `~/Local/` (not Claude-managed):
 
 Personal creative projects elsewhere:
 - `~/Videos/Ultras/` - "Ultras" lyric music video (FilmCraft + EffectCraft via MCP). Local git, no remote. **Launch Claude Code from that folder** so the MCP tools load. Status/resume steps in its `CLAUDE.md`; cross-machine note in simstim `memory/project_ultras_lyric_video.md`.
-- **Guybrush** `~/Videos/Tescrealitat/` - "Tescrealitat" music video (PD retrofuturist footage, no lyrics on screen). Started here 2026-10-12, then **handed to Guybrush**, where the work now runs (reachable from DixieFlatline). Status in its `CLAUDE.md`; simstim `memory/project_tescrealitat_video.md`.
+- `~/Videos/Tescrealitat/` - "Tescrealitat" music video (PD retrofuturist footage, no lyrics on screen). Started here 2026-10-12, built on Guybrush, then **moved back here 2026-10-16** for the hand edit in FilmCraft (`edit/Tescrealitat.fcproj` here is the master; Guybrush gets git pushes as branch `ono`). Status in its `CLAUDE.md`; simstim `memory/project_tescrealitat_video.md`.
 
 ## Music Production
 
