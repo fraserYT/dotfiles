@@ -1,0 +1,6 @@
+[Unit]
+Description=Snapshot open kitty tabs to ~/.config/kitty/last.kitty-session
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/kitty-session-save

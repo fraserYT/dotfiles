@@ -1,0 +1,10 @@
+[Unit]
+Description=Snapshot open kitty tabs every two minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=2min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

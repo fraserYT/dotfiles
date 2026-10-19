@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Snapshot every running kitty's windows, tabs and working directories into one session file,
+# so the next login can restore them (PhpStorm-style persistence; set up 19 Oct 2026).
+#
+# Each kitty instance listens on ${XDG_RUNTIME_DIR}/kitty-sock-<pid> (kitty.conf listen_on).
+# For each live one, ask it to save itself as a session file, then join the files: a session
+# file is a plain list of new_os_window / new_tab / cd / launch lines, so concatenation is a
+# valid multi-window session. Written atomically. When no kitty is running the last snapshot is
+# kept, so closing everything before logging out still restores the last layout.
+#
+# Foreground processes are NOT recorded (no --use-foreground-process): a tab that ran `claude`
+# comes back as a shell in the same directory, never as a fresh claude session started on your
+# behalf. Resuming the right thread is Bunsen's job.
+set -u
+run="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+out="${KITTY_SESSION_FILE:-$HOME/.config/kitty/last.kitty-session}"
+tmpdir="$(mktemp -d "${run}/kitty-session.XXXXXX")" || exit 1
+trap 'rm -rf "$tmpdir"' EXIT
+n=0
+for sock in "$run"/kitty-sock-*; do
+  [ -S "$sock" ] || continue
+  pid="${sock##*-}"
+  [ -d "/proc/$pid" ] || continue
+  part="$tmpdir/$pid.kitty-session"
+  if kitten @ --to "unix:$sock" action save_as_session --save-only "$part" 2>/dev/null && [ -s "$part" ]; then
+    n=$((n + 1))
+  fi
+done
+[ "$n" -gt 0 ] || exit 0
+{
+  echo "# saved $(date -Is) from $n kitty instance(s) by kitty-session-save"
+  for part in "$tmpdir"/*.kitty-session; do
+    echo; cat "$part"
+  done
+} > "$tmpdir/joined"
+mkdir -p "$(dirname "$out")"
+mv -f "$tmpdir/joined" "$out"

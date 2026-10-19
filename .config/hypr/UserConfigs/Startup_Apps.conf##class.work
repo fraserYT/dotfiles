@@ -65,3 +65,7 @@ exec-once = [workspace 4 silent] /home/fraser/.config/hypr/UserScripts/obsidian-
 exec-once = [workspace 5 silent] slack
 exec-once = [workspace 10 silent] 1password
 exec-once = [workspace 14 silent] firefoxpwa site launch 01K1TA6XJSKGPS7P43B39RXHWP
+
+# kitty session persistence (19 Oct 2026): reopen the tabs the timer last snapshotted
+# (~/.local/bin/kitty-session-save). Once per login; a plain `kitty` keeps opening empty.
+exec-once = [ -f ~/.config/kitty/last.kitty-session ] && kitty --session ~/.config/kitty/last.kitty-session
