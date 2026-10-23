@@ -58,7 +58,7 @@ Personal creative projects elsewhere:
 - **DAW**: FL Studio 2025 (FL64.exe) running **natively on the dual-boot Windows partition**
 - **Bottles/Wine**: removed 2026-09-13 (flatpak uninstalled; `~/.var/app/com.usebottles.bottles`, `~/.local/share/bottles` and `~/.wine` deleted). FL Studio has run natively for months — the Linux-side audio stack no longer sits between FL Studio and the hardware.
 - **Audio (Linux side)**: PipeWire (with PulseAudio bridge)
-- **MIDI controller**: Novation Launchpad Mini MK1 (USB Mini-B) — currently not working, suspected hardware failure (see below)
+- **MIDI controller**: Novation Launchpad Mini MK1 (USB Mini-B) — working (the 2026-02-18 failure was the cable; a different Mini-B cable fixed it)
 
 ### Historical: Bottles-era audio + MIDI notes (superseded 2026-09-13)
 FL Studio ran under Bottles/Wine until 2026-09-13. Two long sections used to live here — the
@@ -74,7 +74,7 @@ file `~/.config/pipewire/pipewire.conf.d/10-fl-studio-rates.conf`. The `api.alsa
 handle warning on every boot is also still unexplained.
 
 ### Launchpad Mini MK1 USB Issue (2026-02-18)
-**Status**: Unresolved — suspected dead hardware.
+**Status**: Resolved — it was the **cable** (confirmed 2026-10-23). A different Mini-B cable fixed it; all three tried on 2026-02-18 were evidently faulty. Notes below are the original failure.
 
 **Problem**: Launchpad fails to enumerate on USB. Kernel returns error -71 (protocol error) on every attempt — device descriptor read fails and device does not accept address.
 
@@ -83,7 +83,7 @@ handle warning on every boot is also still unexplained.
 - Both USB-A ports (Bus 3 port 1 and port 2) — same result (both on same xHCI controller)
 - USB-C ports not tested (would need USB-A to USB-C adapter)
 
-**Next step**: Test the Launchpad on another computer to confirm hardware failure. If dead, replace.
+~~Next step: test on another computer / replace~~ — no longer needed, it works.
 
 ## Pending Tasks
 
