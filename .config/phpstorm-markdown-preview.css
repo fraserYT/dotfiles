@@ -1,0 +1,58 @@
+/*
+ * PhpStorm Markdown preview stylesheet.
+ * Wire up: Settings > Languages & Frameworks > Markdown > Custom CSS >
+ *          tick "Load from" and point it at ~/.config/phpstorm-markdown-preview.css
+ * Kept outside ~/.config/JetBrains/ so an IDE upgrade cannot wipe it (and yadm can track it).
+ * Each project stores an inline copy in .idea/markdown.xml: re-sync those after editing this file.
+ */
+
+/* The preview renders content straight into <body> with no gutter. */
+body {
+    max-width: 50em;          /* ~90 chars at the default preview font size */
+    margin: 0 auto;
+    padding: 1.5em 2.5em 4em; /* left/right gutter + breathing room top and bottom */
+    line-height: 1.6;
+    overflow-wrap: anywhere;  /* long URLs and paths break instead of widening the page */
+}
+
+/*
+ * Wrap rather than scroll. The bundled default.css makes tables display:block with
+ * overflow:auto and code blocks white-space:pre, so wide content scrolls sideways
+ * inside its own box. Every rule below overrides one of those.
+ */
+pre,
+pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-x: hidden;
+}
+
+code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+table {
+    display: table;           /* back from block, so the table sizes to the column */
+    width: 100%;
+    table-layout: auto;
+    overflow: visible;
+}
+
+th, td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Narrow windows: reclaim the gutter rather than squeezing the text column. */
+@media (max-width: 40em) {
+    body {
+        padding: 1em 1.25em 3em;
+    }
+}
