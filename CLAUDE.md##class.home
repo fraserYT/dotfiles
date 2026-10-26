@@ -89,11 +89,11 @@ handle warning on every boot is also still unexplained.
 ## Pending Tasks
 
 ### Screen static block / ghost cursor (2026-10-26)
-**Status**: Fix applied and live (rebooted 2026-10-26, `dcdebugmask` = 16). **Static block: none so far** — keep
-observing a few days. **Ghost second cursor: came back the same evening**, despite `no_hardware_cursors = 1` (software
-cursor) — so the cursor is a separate fault and PSR didn't cure it. A half-size `grim -c` capture didn't obviously show
-it; next time get its screen position and crop that spot at full size. If it's absent from the capture (display side),
-try `0x410` (also disables Panel Replay).
+**Status**: Static block: PSR fix live since 2026-10-26 (`dcdebugmask` = 16), none so far; keep observing.
+**Ghost cursor: SOLVED 2026-10-26.** It sat bottom-right and was absent from full-res `grim -c` captures (display
+side). Cause: `no_hardware_cursors = 1` meant Hyprland never touched the AMD cursor plane, so a cursor parked there
+before login was never cleared. Setting it to 0 live made the ghost vanish; now 0 in `UserSettings.conf##class.home`.
+If static recurs, try `0x410` (also disables Panel Replay).
 
 **Symptom**: a block of visual static appears at a random spot, then stays fixed there (over any window) until
 reboot. Earlier symptom: a stuck second cursor, previously blamed on NVIDIA and "fixed" with

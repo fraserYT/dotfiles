@@ -110,7 +110,7 @@ render {
 
 cursor {
   sync_gsettings_theme = true
-  no_hardware_cursors = 1 # 1 = force software cursor (fixes stuck static NVIDIA hw-cursor ghost on boot)
+  no_hardware_cursors = 0 # 0 = hardware cursor. Forcing software (1) LEFT a ghost cursor stuck bottom-right: a cursor parked on the AMD cursor plane before login was never cleared (2026-10-26)
   enable_hyprcursor = true
   warp_on_change_workspace = 2
   no_warps = true 
