@@ -88,6 +88,22 @@ handle warning on every boot is also still unexplained.
 
 ## Pending Tasks
 
+### Screen static block / ghost cursor (2026-10-26)
+**Status**: Fix applied, **awaiting reboot + a few days' observation**.
+
+**Symptom**: a block of visual static appears at a random spot, then stays fixed there (over any window) until
+reboot. Earlier symptom: a stuck second cursor, previously blamed on NVIDIA and "fixed" with
+`no_hardware_cursors = 1` in `UserSettings.conf##class.home`.
+
+**Findings**: `grim` screenshots taken while the block was visible are clean, so the corruption is added after
+Hyprland composites (display hardware or panel). The internal panel eDP-1 is driven by the **AMD 860M**
+(nvidia-drm logs "Cannot find any crtc"), so the NVIDIA blame was wrong. AMD Panel Self Refresh was active
+(`eDP-1: PSR support 1`, `dcdebugmask` 0), and the laptop had resumed from suspend shortly before.
+
+**Fix**: `sudo grubby --update-kernel=ALL --args="amdgpu.dcdebugmask=0x10"` (disables PSR). After reboot,
+`cat /sys/module/amdgpu/parameters/dcdebugmask` should read `16`. If static recurs, try `0x410` (also
+disables Panel Replay). If it's gone for good, try re-enabling the hardware cursor. Undo with `--remove-args`.
+
 ### Hibernate Setup
 **Status**: Not started — info gathered 2026-02-01, ready to implement next session.
 
