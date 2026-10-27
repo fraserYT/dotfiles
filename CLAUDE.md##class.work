@@ -181,17 +181,25 @@ Keep planning and communication lean. Rules:
    `<weekday>-<yyyy-mm-dd>-first-thing.md` whenever work carries over — the single job to do first,
    with the exact command, what is already done, and what is deliberately left. Add its one-line
    entry to `MEMORY.md`. Check whether another thread has already claimed that day and say so.
-   Open this thread's `## ` section with the two lists Bunsen's daily review shows as the short
-   version (prose follows them; `planner/handover.py` parses exactly these labels):
+   Open this thread's `## ` section with the lists Bunsen's GTD page shows as the short version
+   (prose follows them; `planner/handover.py` parses exactly these labels). Sort carry-overs by
+   who acts (ruled 27 Oct): the GTD page lists only **Needs Fraser:** open and folds the rest.
+   Leave out a label with nothing under it.
    ```
+   **Needs Fraser:**
+   - [ ] a decision or action only Fraser can take, in full (answerable without reading back)
+   **Waiting on:**
+   - [ ] what someone else owes, starting with their name
    **Carry over:**
-   - [ ] one line per task Fraser carries into today
+   - [ ] the thread's own work, done when it is resumed
    **Worked on:**
    - one line per thing this thread did
    ```
 2. **Commit and push** — rcp = remember, commit, push; the push is implicit, never ask. Memory:
    `git -C "$HOME/Local Sites/bsb-architecture" add memory/`, commit, push. Stage `memory/` only,
-   never `-A`, and note in the message that other threads may still have been writing. Then commit
+   never `-A`, and note in the message that other threads may still have been writing. The repo's
+   pre-commit hook (`bunsen notes guard --staged`, 14 Oct) refuses a commit in which a first-thing
+   note lost lines: restore the file and append your section again, never `--no-verify`. Then commit
    and push every repo/branch this thread touched (`git push -u origin <branch>` for new branches).
    A branch that has diverged from its remote is never force-pushed: report it in the recap.
    **Worktree lifecycle (ruled 2026-10-01):** a thread's branch is pushed with a PR open before the
