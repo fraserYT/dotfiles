@@ -44,7 +44,7 @@ Projects in `~/Claude/`:
 - `~/Claude/bsb-editorial-dashboard/` - Bitesize Bio editorial dashboard. Repo: `git@github.com:fraserYT/bsb-editorial-dashboard.git` (private).
 - `~/Claude/bsb-workspace/` - Bitesize Bio shared strategy/planning workspace. Repo: `git@github.com:fraserYT/bsb-workspace.git` (private). Multi-user (Fraser, Andy, Nick, Zara).
 - `~/Claude/simstim/` - Cross-machine context bridge (OnoSendai ↔ Guybrush ↔ DixieFlatline). Repo: `git@github.com:fraserYT/simstim.git` (private). Renamed from `claude-hub` 2026-09-08. Pull before session to get latest handoff.
-- `~/Claude/music-production/` - Learning mixing/production in FL Studio (started 2026-10-25). Mix-analysis scripts + reference tracks + `.venv`; learning plan and per-song mix report docs on claude.ai (links in its `CLAUDE.md`).
+- `~/Claude/music-production/` → symlink to `/mnt/shared/music-production` (moved 2026-10-27 so Claude on Hosaka/Windows can use it too). Mix-analysis scripts, reference tracks, `mixes/` (FL exports land here); Linux venv at `~/.venvs/music-production`. `SESSION-NOTES.md` carries conversation between the two OSes. Report docs on claude.ai (links in its `CLAUDE.md`).
 
 Other projects in `~/Local/` (not Claude-managed):
 - `~/Local/bio/`
