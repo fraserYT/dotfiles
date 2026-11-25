@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# bsb-sql: run SQL against the strategy database from a terminal (kitty, Midnight Commander).
+# Made 25 Nov 2026.
+#
+#   bsb-sql run FILE.sql   show the file, ask y/N, run it with psql as ONE transaction
+#                          (ON_ERROR_STOP + --single-transaction: any error rolls the whole file back)
+#   bsb-sql ide            open Harlequin (terminal SQL editor + results grid) on the same database
+#   bsb-sql check          `select 1`, to prove the connection works
+#
+# Where the database is: ~/.pg_service.conf, section [strategy] (host, port, dbname, user, sslmode).
+# The password never sits on disk or passes through Claude: ~/.config/bsb/strategy-db.env holds only
+# a 1Password reference (PGPASSWORD=op://<vault>/<item>/password), and `op run` resolves it at run
+# time, asking to unlock 1Password when needed (house rule: secrets via `op run`, never Claude).
+#
+# Scratch files written for Drizzle Studio (no BEGIN/COMMIT) run unchanged here; files that do have
+# their own BEGIN/COMMIT run too, though psql warns that a transaction is already in progress.
+set -euo pipefail
+
+SERVICE="${BSB_SQL_SERVICE:-strategy}"
+ENV_FILE="${BSB_SQL_ENV:-$HOME/.config/bsb/strategy-db.env}"
+
+die() { printf 'bsb-sql: %s\n' "$*" >&2; exit 1; }
+
+preflight() {
+  command -v op >/dev/null   || die "1Password CLI (op) not found"
+  [[ -f "$ENV_FILE" ]]       || die "missing $ENV_FILE (one line: PGPASSWORD=op://<vault>/<item>/password)"
+  grep -q "^\[$SERVICE\]" "$HOME/.pg_service.conf" 2>/dev/null \
+                             || die "no [$SERVICE] section in ~/.pg_service.conf"
+}
+
+with_secret() { op run --env-file="$ENV_FILE" -- "$@"; }
+
+case "${1:-}" in
+  run)
+    file="${2:-}"
+    [[ -f "$file" && "$file" == *.sql ]] || die "usage: bsb-sql run FILE.sql"
+    preflight
+    command -v psql >/dev/null || die "psql not found"
+    ${PAGER:-less} "$file"
+    printf '\nRun %s on the LIVE %s database (one transaction)? [y/N] ' "$(basename "$file")" "$SERVICE"
+    read -r answer
+    [[ "$answer" == y || "$answer" == Y ]] || { echo "Not run."; exit 0; }
+    with_secret psql "service=$SERVICE" -v ON_ERROR_STOP=1 --single-transaction -f "$file"
+    ;;
+  ide)
+    preflight
+    command -v harlequin >/dev/null || die "harlequin not installed (pipx install harlequin harlequin-postgres)"
+    with_secret harlequin -a postgres "service=$SERVICE"
+    ;;
+  check)
+    preflight
+    with_secret psql "service=$SERVICE" -c "select 1 as connected"
+    ;;
+  *)
+    sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
+    exit 1
+    ;;
+esac
