@@ -76,6 +76,16 @@ with_url() {
     sq=$(printf "\047")
     if [[ $u == \"*\" || $u == "$sq"*"$sq" ]]; then u=${u:1:${#u}-2}; fi
     [[ $u == postgres://* || $u == postgresql://* ]] || { echo "bsb-sql: the 1Password value does not start with postgresql:// (value not shown)" >&2; exit 1; }
+    # The password leaves the URL and travels as PGPASSWORD, which libpq (psql, Harlequin) reads and
+    # never prints. In the URL it showed in full in a psql error (25 Nov 2026) and in `ps` to every
+    # process on the machine. URL percent-encoding is decoded first, as libpq would.
+    scheme=${u%%://*}; rest=${u#*://}; auth=${rest%%@*}
+    if [[ $rest == *@* && $auth == *:* ]]; then
+      pw=${auth#*:}
+      export PGPASSWORD="$(printf "%b" "${pw//%/\\x}")"
+      u="$scheme://${auth%%:*}@${rest#*@}"
+    fi
+    unset STRATEGY_DB_URL pw auth rest
     args=(); for a in "$@"; do if [[ "$a" == URL ]]; then args+=("$u"); else args+=("$a"); fi; done
     exec "${args[@]}"' bsb-sql "$@"
 }
