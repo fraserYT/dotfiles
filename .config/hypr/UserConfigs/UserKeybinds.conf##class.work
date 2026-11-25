@@ -99,3 +99,9 @@ bind = $mainMod ALT SHIFT, code:16, movetoworkspace, 17
 bind = $mainMod ALT SHIFT, code:17, movetoworkspace, 18
 bind = $mainMod ALT SHIFT, code:18, movetoworkspace, 19
 bind = $mainMod ALT SHIFT, code:19, movetoworkspace, 20
+
+# Push-to-talk dictation (bunsen bin/bunsen-ptt, added 25 Nov 2026): hold F13 on the Voyager,
+# speak, release to paste the local-whisper transcript into the active window. Never sends Enter.
+# code:191 not F13: xkb maps the F13 keycode to XF86Tools, so a keysym bind never fires.
+bind = , code:191, exec, $HOME/Claude/bsb/bunsen/bin/bunsen-ptt start
+bindr = , code:191, exec, $HOME/Claude/bsb/bunsen/bin/bunsen-ptt stop
