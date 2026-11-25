@@ -7,28 +7,35 @@
 #   bsb-sql ide            open Harlequin (terminal SQL editor + results grid) on the same database
 #   bsb-sql check          `select 1`, to prove the connection works
 #
-# Where the database is: ~/.pg_service.conf, section [strategy] (host, port, dbname, user, sslmode).
-# The password never sits on disk or passes through Claude: ~/.config/bsb/strategy-db.env holds only
-# a 1Password reference (PGPASSWORD=op://<vault>/<item>/password), and `op run` resolves it at run
-# time, asking to unlock 1Password when needed (house rule: secrets via `op run`, never Claude).
+# The connection: one postgres:// URL, the same value as STRATEGY_DB_URL in bsb-strategy-system's
+# env file. It never sits on disk here or passes through Claude: ~/.config/bsb/strategy-db.env holds
+# only a 1Password reference (STRATEGY_DB_URL=op://<vault>/<item>/<field>), and `op run` resolves it
+# at run time, asking to unlock 1Password when needed (house rule: secrets via `op run`, never Claude).
+# The URL is expanded inside the child shell, so it never appears in this script's arguments.
 #
 # Scratch files written for Drizzle Studio (no BEGIN/COMMIT) run unchanged here; files that do have
 # their own BEGIN/COMMIT run too, though psql warns that a transaction is already in progress.
 set -euo pipefail
 
-SERVICE="${BSB_SQL_SERVICE:-strategy}"
+LABEL="strategy"
 ENV_FILE="${BSB_SQL_ENV:-$HOME/.config/bsb/strategy-db.env}"
 
 die() { printf 'bsb-sql: %s\n' "$*" >&2; exit 1; }
 
 preflight() {
   command -v op >/dev/null   || die "1Password CLI (op) not found"
-  [[ -f "$ENV_FILE" ]]       || die "missing $ENV_FILE (one line: PGPASSWORD=op://<vault>/<item>/password)"
-  grep -q "^\[$SERVICE\]" "$HOME/.pg_service.conf" 2>/dev/null \
-                             || die "no [$SERVICE] section in ~/.pg_service.conf"
+  [[ -f "$ENV_FILE" ]]       || die "missing $ENV_FILE (one line: STRATEGY_DB_URL=op://<vault>/<item>/<field>)"
+  grep -q '^STRATEGY_DB_URL=op://' "$ENV_FILE" \
+                             || die "$ENV_FILE must set STRATEGY_DB_URL to an op:// reference, not the URL itself"
 }
 
-with_secret() { op run --env-file="$ENV_FILE" -- "$@"; }
+# Run a command with STRATEGY_DB_URL resolved by 1Password. "$@" is the command; the literal word
+# URL in it is replaced by the resolved value inside the child shell, never on this command line.
+with_url() {
+  op run --env-file="$ENV_FILE" -- bash -c '
+    args=(); for a in "$@"; do if [[ "$a" == URL ]]; then args+=("$STRATEGY_DB_URL"); else args+=("$a"); fi; done
+    exec "${args[@]}"' bsb-sql "$@"
+}
 
 case "${1:-}" in
   run)
@@ -37,19 +44,19 @@ case "${1:-}" in
     preflight
     command -v psql >/dev/null || die "psql not found"
     ${PAGER:-less} "$file"
-    printf '\nRun %s on the LIVE %s database (one transaction)? [y/N] ' "$(basename "$file")" "$SERVICE"
+    printf '\nRun %s on the LIVE %s database (one transaction)? [y/N] ' "$(basename "$file")" "$LABEL"
     read -r answer
     [[ "$answer" == y || "$answer" == Y ]] || { echo "Not run."; exit 0; }
-    with_secret psql "service=$SERVICE" -v ON_ERROR_STOP=1 --single-transaction -f "$file"
+    with_url psql URL -v ON_ERROR_STOP=1 --single-transaction -f "$file"
     ;;
   ide)
     preflight
     command -v harlequin >/dev/null || die "harlequin not installed (pipx install harlequin harlequin-postgres)"
-    with_secret harlequin -a postgres "service=$SERVICE"
+    with_url harlequin -a postgres URL
     ;;
   check)
     preflight
-    with_secret psql "service=$SERVICE" -c "select 1 as connected"
+    with_url psql URL -c "select 1 as connected"
     ;;
   *)
     sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
