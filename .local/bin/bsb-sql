@@ -68,8 +68,15 @@ explain_env() {
 with_url() {
   local account="${BSB_SQL_OP_ACCOUNT:-${OP_ACCOUNT:-}}"
   [[ -n "$account" ]] || die "more than one 1Password account may be signed in: set OP_ACCOUNT (see \`op account list\`)"
+  # The value as stored in 1Password may carry a leading space or newline, or the quotes it had in
+  # an env file; psql then fails to see a URL ("invalid connection option", 25 Nov 2026). Trim both.
   op run --account "$account" --env-file="$ENV_FILE" -- bash -c '
-    args=(); for a in "$@"; do if [[ "$a" == URL ]]; then args+=("$STRATEGY_DB_URL"); else args+=("$a"); fi; done
+    u=$STRATEGY_DB_URL
+    u=${u#"${u%%[![:space:]]*}"}; u=${u%"${u##*[![:space:]]}"}
+    sq=$(printf "\047")
+    if [[ $u == \"*\" || $u == "$sq"*"$sq" ]]; then u=${u:1:${#u}-2}; fi
+    [[ $u == postgres://* || $u == postgresql://* ]] || { echo "bsb-sql: the 1Password value does not start with postgresql:// (value not shown)" >&2; exit 1; }
+    args=(); for a in "$@"; do if [[ "$a" == URL ]]; then args+=("$u"); else args+=("$a"); fi; done
     exec "${args[@]}"' bsb-sql "$@"
 }
 
