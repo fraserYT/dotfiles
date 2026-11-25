@@ -27,14 +27,48 @@ preflight() {
   [[ -f "$ENV_FILE" ]]       || die "missing $ENV_FILE (one line: STRATEGY_DB_URL=op://<vault>/<item>/<field>)"
   # Accepts `export ` in front and a quoted value; the name must be upper case (it is read as
   # $STRATEGY_DB_URL below).
-  grep -qE '^[[:space:]]*(export[[:space:]]+)?STRATEGY_DB_URL=["'"'"']?op://' "$ENV_FILE" \
-                             || die "$ENV_FILE must set STRATEGY_DB_URL to an op:// reference, not the URL itself"
+  # Editors add a byte-order mark or Windows line endings; strip both before checking.
+  local clean
+  clean=$(sed -e '1s/^\xEF\xBB\xBF//' -e 's/\r$//' "$ENV_FILE")
+  if ! grep -qE '^[[:space:]]*(export[[:space:]]+)?STRATEGY_DB_URL=["'"'"']?op://' <<<"$clean"; then
+    explain_env
+    die "$ENV_FILE must set STRATEGY_DB_URL to an op:// reference, not the URL itself"
+  fi
+}
+
+# Says what the file holds without printing any value: each line's name, the value's first five
+# characters only when they are the public prefix "op://", and any hidden characters.
+explain_env() {
+  local n=0 line name val kind
+  printf 'bsb-sql: what %s holds (values never shown):\n' "$ENV_FILE" >&2
+  head -c3 "$ENV_FILE" | grep -q $'\xEF\xBB\xBF' && echo "  file starts with a byte-order mark (stripped)" >&2
+  grep -q $'\r' "$ENV_FILE" && echo "  Windows line endings found (stripped)" >&2
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    n=$((n + 1))
+    line=${line%$'\r'}
+    [[ -z "${line//[[:space:]]/}" ]] && { echo "  line $n: blank" >&2; continue; }
+    [[ "$line" == \#* ]] && { echo "  line $n: comment" >&2; continue; }
+    [[ "$line" != *=* ]] && { echo "  line $n: no '=' sign" >&2; continue; }
+    name=${line%%=*}; val=${line#*=}; val=${val#[\"\']}
+    if [[ "$name" == *[[:space:]] || "$val" == [[:space:]]* ]]; then kind="written with spaces round '=' (remove them)"
+    elif [[ "$val" == op://* ]]; then kind="an op:// reference"
+    elif [[ "$val" == postgres* ]]; then kind="a plain postgres URL (move it into 1Password)"
+    elif [[ -z "$val" ]]; then kind="empty"
+    else kind="something else (${#val} characters)"; fi
+    printf '  line %d: name [%s], value is %s\n' "$n" "$name" "$kind" >&2
+  done < "$ENV_FILE"
 }
 
 # Run a command with STRATEGY_DB_URL resolved by 1Password. "$@" is the command; the literal word
 # URL in it is replaced by the resolved value inside the child shell, never on this command line.
+#
+# Which 1Password account: Dixie is signed in to more than one, and `op` refuses to guess. Set
+# OP_ACCOUNT (the sign-in address from `op account list`, e.g. in ~/.zshrc), or BSB_SQL_OP_ACCOUNT
+# to use a different one just for this script.
 with_url() {
-  op run --env-file="$ENV_FILE" -- bash -c '
+  local account="${BSB_SQL_OP_ACCOUNT:-${OP_ACCOUNT:-}}"
+  [[ -n "$account" ]] || die "more than one 1Password account may be signed in: set OP_ACCOUNT (see \`op account list\`)"
+  op run --account "$account" --env-file="$ENV_FILE" -- bash -c '
     args=(); for a in "$@"; do if [[ "$a" == URL ]]; then args+=("$STRATEGY_DB_URL"); else args+=("$a"); fi; done
     exec "${args[@]}"' bsb-sql "$@"
 }
