@@ -25,7 +25,9 @@ die() { printf 'bsb-sql: %s\n' "$*" >&2; exit 1; }
 preflight() {
   command -v op >/dev/null   || die "1Password CLI (op) not found"
   [[ -f "$ENV_FILE" ]]       || die "missing $ENV_FILE (one line: STRATEGY_DB_URL=op://<vault>/<item>/<field>)"
-  grep -q '^STRATEGY_DB_URL=op://' "$ENV_FILE" \
+  # Accepts `export ` in front and a quoted value; the name must be upper case (it is read as
+  # $STRATEGY_DB_URL below).
+  grep -qE '^[[:space:]]*(export[[:space:]]+)?STRATEGY_DB_URL=["'"'"']?op://' "$ENV_FILE" \
                              || die "$ENV_FILE must set STRATEGY_DB_URL to an op:// reference, not the URL itself"
 }
 
