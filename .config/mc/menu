@@ -381,7 +381,7 @@ o       Open next a free console
 # ---- BsB SQL (added 25 Nov 2026; see ~/.local/bin/bsb-sql) ----
 # This file is a copy of /etc/mc/mc.menu with these entries added (a user menu replaces the
 # system one rather than extending it).
-+ f *.sql
++ f \.sql$ & t r
 S       Run this SQL on the strategy DB (psql, one transaction)
         bsb-sql run %f
         printf "\nPress Enter to return to mc"; read _
